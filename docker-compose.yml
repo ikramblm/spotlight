@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: spotlight
+      POSTGRES_PASSWORD: spotlight
+      POSTGRES_DB: spotlight
+    ports:
+      - "5432:5432"
+    volumes:
+      - spotlight_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U spotlight"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Not started by a plain `docker compose up` - local dev normally runs the API with
+  # `npm run dev` for hot-reload (see backend/README.md). This is the containerized shape,
+  # for testing the actual deployment image locally: `docker compose --profile full up -d`.
+  backend:
+    profiles: ["full"]
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgres://spotlight:spotlight@postgres:5432/spotlight
+      CORS_ORIGIN: http://localhost:5173
+      JWT_ACCESS_SECRET: local-full-stack-test-access-secret-0000
+      JWT_REFRESH_SECRET: local-full-stack-test-refresh-secret-0000
+    ports:
+      - "4000:4000"
+
+volumes:
+  spotlight_pg_data:

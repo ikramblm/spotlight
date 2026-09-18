@@ -1,0 +1,8 @@
+backend/node_modules
+backend/dist
+backend/storage
+backend/.env
+mobile
+docs
+.git
+**/*.test.ts
