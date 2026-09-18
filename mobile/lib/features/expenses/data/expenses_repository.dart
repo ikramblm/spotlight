@@ -29,7 +29,7 @@ class ExpensesRepository {
           'pageSize': 200,
           if (from != null) 'from': formatDateOnly(from),
           if (to != null) 'to': formatDateOnly(to),
-          if (categoryId != null) 'categoryId': categoryId,
+          'categoryId': ?categoryId,
         },
       );
       final data = (res.data as Map<String, dynamic>)['data'] as List<dynamic>;
@@ -56,7 +56,7 @@ class ExpensesRepository {
           'expenseDate': formatDateOnly(expenseDate),
           'paymentMethod': paymentMethod.toApi(),
           if (description != null && description.isNotEmpty) 'description': description,
-          if (bookingId != null) 'bookingId': bookingId,
+          'bookingId': ?bookingId,
         },
       );
       return Expense.fromJson((res.data as Map<String, dynamic>)['data'] as Map<String, dynamic>);

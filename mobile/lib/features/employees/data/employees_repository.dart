@@ -85,7 +85,7 @@ class EmployeesRepository {
           'employeeId': employeeId,
           'periodStart': formatDateOnly(periodStart),
           'periodEnd': formatDateOnly(periodEnd),
-          if (baseSalary != null) 'baseSalary': baseSalary,
+          'baseSalary': ?baseSalary,
           'bonuses': bonuses,
           'deductions': deductions,
         },

@@ -15,7 +15,7 @@ class CalendarRepository {
         queryParameters: {
           'from': from.toUtc().toIso8601String(),
           'to': to.toUtc().toIso8601String(),
-          if (hallId != null) 'hallId': hallId,
+          'hallId': ?hallId,
         },
       );
       final data = (res.data as Map<String, dynamic>)['data'] as List<dynamic>;
@@ -27,7 +27,7 @@ class CalendarRepository {
 
   Future<List<CalendarEntry>> fetchToday({String? hallId}) async {
     try {
-      final res = await _dio.get('/calendar/today', queryParameters: {if (hallId != null) 'hallId': hallId});
+      final res = await _dio.get('/calendar/today', queryParameters: {'hallId': ?hallId});
       final data = (res.data as Map<String, dynamic>)['data'] as List<dynamic>;
       return data.map((e) => CalendarEntry.fromJson(e as Map<String, dynamic>)).toList();
     } on DioException catch (e) {
