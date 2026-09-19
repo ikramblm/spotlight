@@ -28,10 +28,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # subosito/flutter-action doesn't manage Java itself (that input doesn't exist on it) -
+      # the Android build needs a real JDK matching android/app/build.gradle.kts's
+      # sourceCompatibility, which setup-java provides explicitly rather than relying on
+      # whatever happens to be the runner image's default.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          java-version: "17"
 
       - run: flutter pub get
 
