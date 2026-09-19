@@ -25,6 +25,11 @@ Flutter app targeting iOS, Android and Web from one codebase.
 - **Phase 10:** no new screens - the backend/deployment hardening phase. `flutter analyze` and
   `flutter test` now run in CI (`.github/workflows/mobile-ci.yml`) on every push/PR that touches
   `mobile/`, the same checks that have been run manually at the end of every phase so far.
+  `.github/workflows/mobile-release.yml` additionally builds a release APK on every push to
+  `main` and publishes it to a rolling "latest" GitHub Release - signed with Flutter's default
+  debug keystore, so it installs fine for sideloading/testing but isn't set up for Play Store
+  distribution (that needs a real signing key - see the TODO in
+  `android/app/build.gradle.kts`).
 
 See the architecture doc §28 for the Phase 10 roadmap (security hardening, load/edge-case
 testing, deployment).

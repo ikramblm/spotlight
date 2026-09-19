@@ -1,0 +1,56 @@
+name: Mobile Release APK
+
+# Builds a release APK and publishes it to a rolling "latest" GitHub Release, so there's always
+# one stable link to download the current build from:
+#   https://github.com/<owner>/<repo>/releases/latest
+#
+# Signed with Flutter's default debug keystore (see android/app/build.gradle.kts) - fine for
+# sideloading/testing, not set up for Play Store distribution, which needs a real signing key.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "mobile/**"
+      - ".github/workflows/mobile-release.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          java-version: "17"
+
+      - run: flutter pub get
+
+      - run: flutter gen-l10n
+
+      - run: flutter analyze
+
+      - run: flutter test
+
+      - run: flutter build apk --release
+
+      - name: Publish to the "latest" release
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: latest
+          name: Latest build (${{ github.sha }})
+          body: |
+            Automatically built from commit ${{ github.sha }}.
+            Signed with the Flutter debug keystore - fine for sideloading/testing, not for Play Store distribution.
+          make_latest: true
+          files: mobile/build/app/outputs/flutter-apk/app-release.apk
